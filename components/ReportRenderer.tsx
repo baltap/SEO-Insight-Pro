@@ -322,10 +322,10 @@ const ReportRenderer: React.FC<ReportRendererProps> = ({ markdown, sources, targ
                                <table className="min-w-full divide-y divide-slate-200 dark:divide-slate-700 table-auto" {...props} />
                              </div>
                            ),
-                           thead: ({node, ...props}) => <thead className="bg-slate-100 dark:bg-slate-900 print:bg-slate-100" {...props} />,
+                           thead: ({node, ...props}) => <thead className="bg-slate-100 dark:bg-slate-950 print:bg-slate-100" {...props} />,
                            tbody: ({node, ...props}) => <tbody className="divide-y divide-slate-200 dark:divide-slate-700 bg-white dark:bg-slate-800" {...props} />,
                            tr: ({node, ...props}) => <tr className="even:bg-slate-50/60 dark:even:bg-slate-800/40 hover:bg-slate-100/80 dark:hover:bg-slate-700/50 transition-colors" {...props} />,
-                           th: ({node, ...props}) => <th className="px-6 py-4 text-left text-xs font-bold text-slate-800 dark:text-slate-200 uppercase tracking-wider align-top border-b border-slate-200 dark:border-slate-700 min-w-[140px]" {...props} />,
+                           th: ({node, ...props}) => <th className="px-6 py-4 text-left text-xs font-bold text-slate-800 !dark:text-white uppercase tracking-wider align-top border-b border-slate-200 dark:border-slate-600 min-w-[140px]" {...props} />,
                            td: ({node, ...props}) => <td className="px-6 py-4 text-sm text-slate-700 dark:text-slate-300 align-top whitespace-normal break-words min-w-[160px]" {...props} />,
                            img: ({node, ...props}) => <img className="rounded-lg max-w-full h-auto my-6 border border-slate-100 dark:border-slate-700 shadow-sm" {...props} />,
                          }}
