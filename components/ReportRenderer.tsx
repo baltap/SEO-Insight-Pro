@@ -1,7 +1,7 @@
 import React, { useMemo, useState, useRef } from 'react';
 import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
-import { Download, Link as LinkIcon, CheckCircle, AlertTriangle, Info, Zap, Layout as LayoutIcon, FileText, Search as SearchIcon, Globe, Check } from 'lucide-react';
+import { Download, CheckCircle, AlertTriangle, Info, Zap, Layout as LayoutIcon, FileText, Search as SearchIcon, Globe } from 'lucide-react';
 import { GroundingSource, AnalysisMetrics, AnalysisMetric, SEOAnalysisRequest } from '../types';
 
 interface ReportRendererProps {
@@ -161,7 +161,6 @@ const ReportRenderer: React.FC<ReportRendererProps> = ({ markdown, sources, targ
   // Memoize sections to avoid re-parsing on every render
   const sections = useMemo(() => parseMarkdownSections(markdown), [markdown]);
   const [isGeneratingPDF, setIsGeneratingPDF] = useState(false);
-  const [isCopied, setIsCopied] = useState(false);
   const reportRef = useRef<HTMLDivElement>(null);
   
   const handleDownloadPDF = () => {
@@ -215,37 +214,6 @@ const ReportRenderer: React.FC<ReportRendererProps> = ({ markdown, sources, targ
     }, 200);
   };
 
-  const handleShare = async () => {
-    try {
-      if (analysisRequest) {
-        // Encode the full request to a Base64 string for persistence
-        const jsonString = JSON.stringify(analysisRequest);
-        const encoded = btoa(jsonString);
-        
-        // Construct absolute URL with ?q=...
-        const baseUrl = window.location.href.split('?')[0].replace(/^blob:/, ''); // Strip blob and existing params
-        
-        // Handle local/blob URLs by attempting to use origin if available, otherwise just use the raw path
-        const cleanBase = baseUrl.startsWith('http') ? baseUrl : window.location.origin + window.location.pathname;
-        
-        const shareUrl = `${cleanBase}?q=${encoded}`;
-
-        await navigator.clipboard.writeText(shareUrl);
-        
-        if (window.location.protocol === 'blob:') {
-           console.warn("Blob URL detected. Share link might only work if the app is deployed.");
-        }
-      } else {
-        await navigator.clipboard.writeText(window.location.href);
-      }
-
-      setIsCopied(true);
-      setTimeout(() => setIsCopied(false), 2000);
-    } catch (err) {
-      console.error('Failed to copy link:', err);
-    }
-  };
-
   const isExternalSource = (sourceUrl: string, baseUrl: string) => {
     try {
       const sourceHost = new URL(sourceUrl).hostname.replace(/^www\./, '');
@@ -282,27 +250,6 @@ const ReportRenderer: React.FC<ReportRendererProps> = ({ markdown, sources, targ
                 <>
                   <Download className="w-4 h-4" />
                   Export PDF
-                </>
-              )}
-            </button>
-            <button 
-              onClick={handleShare}
-              aria-label="Copy share link to clipboard"
-              className={`flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium transition-all duration-200 ${
-                isCopied 
-                  ? 'bg-green-100 dark:bg-green-900/30 text-green-700 dark:text-green-300 hover:bg-green-200' 
-                  : 'bg-brand-50 dark:bg-brand-900/20 hover:bg-brand-100 dark:hover:bg-brand-900/40 text-brand-700 dark:text-brand-300'
-              }`}
-            >
-              {isCopied ? (
-                <>
-                  <Check className="w-4 h-4" />
-                  Copied Link!
-                </>
-              ) : (
-                <>
-                  <LinkIcon className="w-4 h-4" />
-                  Share Link
                 </>
               )}
             </button>
