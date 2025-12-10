@@ -56,7 +56,7 @@ const Layout: React.FC<LayoutProps> = ({ children, onChatToggle, onNavigate, cur
                Documentation
              </button>
              <a 
-               href="https://github.com" 
+               href="https://github.com/baltap/SEO-Insight-Pro" 
                target="_blank"
                rel="noreferrer"
                className="p-2 text-slate-400 hover:text-slate-900 dark:hover:text-white transition-colors"

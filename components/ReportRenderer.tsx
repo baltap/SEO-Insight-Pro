@@ -362,16 +362,24 @@ const ReportRenderer: React.FC<ReportRendererProps> = ({ markdown, sources, targ
                        <ReactMarkdown
                          remarkPlugins={[remarkGfm]}
                          components={{
-                           h1: ({node, ...props}) => <h1 className="flex items-center gap-3 border-b-2 border-brand-100 dark:border-brand-900 pb-4 mb-8" {...props} />,
+                           h1: ({node, ...props}) => <h1 className="flex items-center gap-3 border-b-2 border-brand-100 dark:border-brand-900 pb-4 mb-8 text-3xl font-bold text-slate-900 dark:text-white" {...props} />,
                            h2: ({node, ...props}) => <h2 className="mt-8 mb-6 text-brand-800 dark:text-brand-400" {...props} />,
                            h3: ({node, ...props}) => <h3 className="mt-6 mb-4 text-slate-700 dark:text-slate-200" {...props} />,
+                           p: ({node, ...props}) => <p className="mb-4 leading-relaxed text-slate-700 dark:text-slate-300" {...props} />,
+                           strong: ({node, ...props}) => <strong className="font-bold text-slate-900 dark:text-white" {...props} />,
                            ul: ({node, ...props}) => <ul className="bg-slate-50 dark:bg-slate-900/50 p-6 rounded-lg border border-slate-100 dark:border-slate-700 my-6 space-y-2 print:bg-transparent print:p-0 print:border-none" {...props} />,
-                           li: ({node, ...props}) => <li className="marker:text-brand-500 dark:marker:text-brand-400" {...props} />,
+                           li: ({node, ...props}) => <li className="marker:text-brand-500 dark:marker:text-brand-400 text-slate-700 dark:text-slate-300" {...props} />,
                            blockquote: ({node, ...props}) => <blockquote className="border-l-4 border-brand-500 bg-brand-50 dark:bg-brand-900/20 p-4 rounded-r-lg not-italic text-slate-700 dark:text-slate-300 my-6 print:bg-transparent" {...props} />,
-                           table: ({node, ...props}) => <div className="overflow-x-auto my-8 rounded-lg border border-slate-200 dark:border-slate-700 print:border-slate-300"><table className="min-w-full divide-y divide-slate-200 dark:divide-slate-700 table-auto" {...props} /></div>,
-                           thead: ({node, ...props}) => <thead className="bg-slate-50 dark:bg-slate-900 print:bg-slate-100" {...props} />,
-                           th: ({node, ...props}) => <th className="px-6 py-3 text-left text-xs font-bold text-slate-700 dark:text-slate-300 uppercase tracking-wider align-top border-b border-slate-200 dark:border-slate-700 min-w-[140px] whitespace-nowrap" {...props} />,
-                           td: ({node, ...props}) => <td className="px-6 py-4 text-sm text-slate-600 dark:text-slate-400 border-t border-slate-100 dark:border-slate-700 align-top whitespace-normal break-words min-w-[200px]" {...props} />,
+                           table: ({node, ...props}) => (
+                             <div className="overflow-x-auto my-8 rounded-lg border border-slate-200 dark:border-slate-700 shadow-sm print:shadow-none print:border-slate-300">
+                               <table className="min-w-full divide-y divide-slate-200 dark:divide-slate-700 table-auto" {...props} />
+                             </div>
+                           ),
+                           thead: ({node, ...props}) => <thead className="bg-slate-100 dark:bg-slate-900 print:bg-slate-100" {...props} />,
+                           tbody: ({node, ...props}) => <tbody className="divide-y divide-slate-200 dark:divide-slate-700 bg-white dark:bg-slate-800" {...props} />,
+                           tr: ({node, ...props}) => <tr className="even:bg-slate-50/60 dark:even:bg-slate-800/40 hover:bg-slate-100/80 dark:hover:bg-slate-700/50 transition-colors" {...props} />,
+                           th: ({node, ...props}) => <th className="px-6 py-4 text-left text-xs font-bold text-slate-800 dark:text-slate-200 uppercase tracking-wider align-top border-b border-slate-200 dark:border-slate-700 min-w-[140px]" {...props} />,
+                           td: ({node, ...props}) => <td className="px-6 py-4 text-sm text-slate-700 dark:text-slate-300 align-top whitespace-normal break-words min-w-[160px]" {...props} />,
                            img: ({node, ...props}) => <img className="rounded-lg max-w-full h-auto my-6 border border-slate-100 dark:border-slate-700 shadow-sm" {...props} />,
                          }}
                        >

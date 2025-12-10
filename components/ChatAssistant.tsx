@@ -19,15 +19,18 @@ const ChatAssistant: React.FC<ChatAssistantProps> = ({ isOpen, onToggle }) => {
   ]);
   const [input, setInput] = useState('');
   const [isTyping, setIsTyping] = useState(false);
-  const messagesEndRef = useRef<HTMLDivElement>(null);
+  const messagesContainerRef = useRef<HTMLDivElement>(null);
 
   const scrollToBottom = () => {
-    messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
+    if (messagesContainerRef.current) {
+      messagesContainerRef.current.scrollTop = messagesContainerRef.current.scrollHeight;
+    }
   };
 
   useEffect(() => {
     if (isOpen) {
-      scrollToBottom();
+      // Small timeout to ensure rendering is complete before scrolling
+      setTimeout(scrollToBottom, 100);
     }
   }, [messages, isOpen]);
 
@@ -76,7 +79,7 @@ const ChatAssistant: React.FC<ChatAssistantProps> = ({ isOpen, onToggle }) => {
       </div>
 
       {/* Messages */}
-      <div className="flex-1 overflow-y-auto p-4 space-y-4 bg-slate-50">
+      <div ref={messagesContainerRef} className="flex-1 overflow-y-auto p-4 space-y-4 bg-slate-50">
         {messages.map((msg, idx) => (
           <div key={idx} className={`flex ${msg.role === 'user' ? 'justify-end' : 'justify-start'}`}>
             <div 
@@ -110,7 +113,6 @@ const ChatAssistant: React.FC<ChatAssistantProps> = ({ isOpen, onToggle }) => {
             </div>
           </div>
         )}
-        <div ref={messagesEndRef} />
       </div>
 
       {/* Input */}
@@ -121,7 +123,7 @@ const ChatAssistant: React.FC<ChatAssistantProps> = ({ isOpen, onToggle }) => {
             value={input}
             onChange={(e) => setInput(e.target.value)}
             placeholder="Ask about SEO or your report..."
-            className="flex-1 px-4 py-2 border border-slate-300 rounded-full focus:outline-none focus:ring-2 focus:ring-brand-500 text-sm text-slate-900 placeholder-slate-500 bg-slate-50"
+            className="flex-1 px-4 py-2 border border-slate-300 rounded-full focus:outline-none focus:ring-2 focus:ring-brand-500 text-slate-900 placeholder-slate-500 bg-slate-50"
           />
           <button
             type="submit"
