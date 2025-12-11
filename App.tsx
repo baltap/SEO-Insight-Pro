@@ -4,11 +4,12 @@ import AnalysisForm from './components/AnalysisForm';
 import ReportRenderer from './components/ReportRenderer';
 import ChatAssistant from './components/ChatAssistant';
 import Documentation from './components/Documentation';
+import LlmsTxtGenerator from './components/LlmsTxtGenerator';
 import { analyzeSEO } from './services/geminiService';
 import { AnalysisStatus, AnalysisResult, SEOAnalysisRequest } from './types';
 import { AlertCircle } from 'lucide-react';
 
-type ViewState = 'home' | 'docs';
+type ViewState = 'home' | 'docs' | 'llms-generator';
 
 const App: React.FC = () => {
   const [status, setStatus] = useState<AnalysisStatus>(AnalysisStatus.IDLE);
@@ -90,6 +91,85 @@ const App: React.FC = () => {
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
+  const renderContent = () => {
+    if (currentView === 'docs') {
+      return <Documentation />;
+    }
+    
+    if (currentView === 'llms-generator') {
+      return <LlmsTxtGenerator />;
+    }
+
+    // Home View
+    return (
+      <div className="space-y-12">
+        {/* Hero Section */}
+        {status === AnalysisStatus.IDLE && (
+          <div className="text-center max-w-3xl mx-auto space-y-4 mb-12 animate-fade-in">
+            <h1 className="text-4xl md:text-5xl font-extrabold text-slate-900 dark:text-white tracking-tight leading-tight">
+              Unlock Your Website's <span className="text-transparent bg-clip-text bg-gradient-to-r from-brand-600 to-cyan-500">Search Potential</span>
+            </h1>
+            <p className="text-lg md:text-xl text-slate-600 dark:text-slate-400">
+              Generate professional, AI-powered SEO audit reports in seconds. Identify technical issues, keyword gaps, and competitor opportunities.
+            </p>
+          </div>
+        )}
+
+        {/* Form Section - Hide when completed to focus on report, or keep for re-analysis */}
+        <div className={`transition-all duration-500 ${status === AnalysisStatus.COMPLETED ? 'opacity-0 h-0 overflow-hidden hidden' : 'opacity-100'}`}>
+            <div className="max-w-2xl mx-auto">
+              <AnalysisForm 
+                onSubmit={handleAnalysisSubmit} 
+                isLoading={status === AnalysisStatus.ANALYZING} 
+                loadingMessage={loadingMessage}
+              />
+            </div>
+        </div>
+
+        {/* Error State */}
+        {status === AnalysisStatus.ERROR && (
+          <div className="max-w-2xl mx-auto p-4 bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-lg flex items-start gap-3 text-red-700 dark:text-red-400 animate-fade-in">
+            <AlertCircle className="w-5 h-5 flex-shrink-0 mt-0.5" />
+            <div>
+              <h3 className="font-semibold">Analysis Failed</h3>
+              <p className="text-sm mt-1">{error}</p>
+              <button 
+                onClick={() => setStatus(AnalysisStatus.IDLE)}
+                className="mt-3 text-sm font-medium underline hover:text-red-800 dark:hover:text-red-300"
+              >
+                Try Again
+              </button>
+            </div>
+          </div>
+        )}
+
+        {/* Results Section */}
+        {status === AnalysisStatus.COMPLETED && result && (
+          <div className="animate-fade-in">
+            <div className="flex justify-between items-center mb-6">
+                <button 
+                  onClick={() => setStatus(AnalysisStatus.IDLE)}
+                  className="text-brand-600 dark:text-brand-400 hover:text-brand-800 dark:hover:text-brand-300 font-medium flex items-center gap-1"
+                >
+                  ← Start New Analysis
+                </button>
+            </div>
+            <ReportRenderer 
+              markdown={result.markdown} 
+              sources={result.sources}
+              targetUrl={targetUrl}
+              metrics={result.metrics}
+              analysisRequest={currentRequest}
+              isDarkMode={isDarkMode}
+              setIsDarkMode={setIsDarkMode}
+              onCreateLlmsTxt={() => handleNavigation('llms-generator')}
+            />
+          </div>
+        )}
+      </div>
+    );
+  };
+
   return (
     <Layout 
       onChatToggle={() => setIsChatOpen(!isChatOpen)} 
@@ -98,74 +178,7 @@ const App: React.FC = () => {
       isDarkMode={isDarkMode}
       onThemeToggle={() => setIsDarkMode(!isDarkMode)}
     >
-      {currentView === 'docs' ? (
-        <Documentation />
-      ) : (
-        <div className="space-y-12">
-          {/* Hero Section */}
-          {status === AnalysisStatus.IDLE && (
-            <div className="text-center max-w-3xl mx-auto space-y-4 mb-12 animate-fade-in">
-              <h1 className="text-4xl md:text-5xl font-extrabold text-slate-900 dark:text-white tracking-tight leading-tight">
-                Unlock Your Website's <span className="text-transparent bg-clip-text bg-gradient-to-r from-brand-600 to-cyan-500">Search Potential</span>
-              </h1>
-              <p className="text-lg md:text-xl text-slate-600 dark:text-slate-400">
-                Generate professional, AI-powered SEO audit reports in seconds. Identify technical issues, keyword gaps, and competitor opportunities.
-              </p>
-            </div>
-          )}
-
-          {/* Form Section - Hide when completed to focus on report, or keep for re-analysis */}
-          <div className={`transition-all duration-500 ${status === AnalysisStatus.COMPLETED ? 'opacity-0 h-0 overflow-hidden hidden' : 'opacity-100'}`}>
-             <div className="max-w-2xl mx-auto">
-               <AnalysisForm 
-                 onSubmit={handleAnalysisSubmit} 
-                 isLoading={status === AnalysisStatus.ANALYZING} 
-                 loadingMessage={loadingMessage}
-               />
-             </div>
-          </div>
-
-          {/* Error State */}
-          {status === AnalysisStatus.ERROR && (
-            <div className="max-w-2xl mx-auto p-4 bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-lg flex items-start gap-3 text-red-700 dark:text-red-400 animate-fade-in">
-              <AlertCircle className="w-5 h-5 flex-shrink-0 mt-0.5" />
-              <div>
-                <h3 className="font-semibold">Analysis Failed</h3>
-                <p className="text-sm mt-1">{error}</p>
-                <button 
-                  onClick={() => setStatus(AnalysisStatus.IDLE)}
-                  className="mt-3 text-sm font-medium underline hover:text-red-800 dark:hover:text-red-300"
-                >
-                  Try Again
-                </button>
-              </div>
-            </div>
-          )}
-
-          {/* Results Section */}
-          {status === AnalysisStatus.COMPLETED && result && (
-            <div className="animate-fade-in">
-              <div className="flex justify-between items-center mb-6">
-                 <button 
-                   onClick={() => setStatus(AnalysisStatus.IDLE)}
-                   className="text-brand-600 dark:text-brand-400 hover:text-brand-800 dark:hover:text-brand-300 font-medium flex items-center gap-1"
-                 >
-                   ← Start New Analysis
-                 </button>
-              </div>
-              <ReportRenderer 
-                markdown={result.markdown} 
-                sources={result.sources}
-                targetUrl={targetUrl}
-                metrics={result.metrics}
-                analysisRequest={currentRequest}
-                isDarkMode={isDarkMode}
-                setIsDarkMode={setIsDarkMode}
-              />
-            </div>
-          )}
-        </div>
-      )}
+      {renderContent()}
 
       {/* Global Chat Assistant */}
       <ChatAssistant isOpen={isChatOpen} onToggle={() => setIsChatOpen(!isChatOpen)} />

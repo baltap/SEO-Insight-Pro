@@ -1,7 +1,7 @@
 import React, { useMemo, useState, useRef } from 'react';
 import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
-import { Download, CheckCircle, AlertTriangle, Info, Zap, Layout as LayoutIcon, FileText, Search as SearchIcon, Globe } from 'lucide-react';
+import { Download, CheckCircle, AlertTriangle, Info, Zap, Layout as LayoutIcon, FileText, Search as SearchIcon, Globe, Bot } from 'lucide-react';
 import { GroundingSource, AnalysisMetrics, AnalysisMetric, SEOAnalysisRequest } from '../types';
 
 interface ReportRendererProps {
@@ -12,6 +12,7 @@ interface ReportRendererProps {
   analysisRequest: SEOAnalysisRequest | null;
   isDarkMode: boolean;
   setIsDarkMode: (isDark: boolean) => void;
+  onCreateLlmsTxt?: () => void;
 }
 
 interface ReportSection {
@@ -157,7 +158,7 @@ const parseMarkdownSections = (markdown: string): ReportSection[] => {
   });
 };
 
-const ReportRenderer: React.FC<ReportRendererProps> = ({ markdown, sources, targetUrl, metrics, analysisRequest, isDarkMode, setIsDarkMode }) => {
+const ReportRenderer: React.FC<ReportRendererProps> = ({ markdown, sources, targetUrl, metrics, analysisRequest, isDarkMode, setIsDarkMode, onCreateLlmsTxt }) => {
   // Memoize sections to avoid re-parsing on every render
   const sections = useMemo(() => parseMarkdownSections(markdown), [markdown]);
   const [isGeneratingPDF, setIsGeneratingPDF] = useState(false);
@@ -272,9 +273,29 @@ const ReportRenderer: React.FC<ReportRendererProps> = ({ markdown, sources, targ
             .prose pre { white-space: pre-wrap; word-wrap: break-word; background-color: #f8fafc; border-radius: 8px; padding: 1rem; border: 1px solid #e2e8f0; font-size: 0.85rem; }
           `}</style>
           
+          {metrics?.aiReadiness && metrics.aiReadiness.score < 50 && onCreateLlmsTxt && (
+             <div className="bg-gradient-to-r from-purple-900 to-indigo-900 text-white p-6 rounded-xl shadow-lg mb-8 flex flex-col md:flex-row items-center justify-between gap-4 animate-fade-in print:hidden">
+                <div className="flex items-center gap-4">
+                   <div className="bg-white/10 p-3 rounded-full">
+                      <Bot className="w-8 h-8 text-purple-300" />
+                   </div>
+                   <div>
+                      <h3 className="font-bold text-lg">Missing llms.txt Detected</h3>
+                      <p className="text-purple-200 text-sm">Your AI Readiness score is low. Create an llms.txt file to control how AI interprets your brand.</p>
+                   </div>
+                </div>
+                <button 
+                  onClick={onCreateLlmsTxt}
+                  className="bg-white text-purple-900 px-6 py-2 rounded-lg font-bold hover:bg-purple-100 transition-colors whitespace-nowrap"
+                >
+                  Generate llms.txt
+                </button>
+             </div>
+          )}
+
           {metrics && (
             <div>
-              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4 mb-8">
                 <MetricCard 
                   label="Technical SEO" 
                   metric={metrics.technical} 
@@ -295,6 +316,13 @@ const ReportRenderer: React.FC<ReportRendererProps> = ({ markdown, sources, targ
                   metric={metrics.keywords} 
                   icon={<SearchIcon className="w-4 h-4 text-brand-600 dark:text-brand-400" />} 
                 />
+                {metrics.aiReadiness && (
+                  <MetricCard 
+                    label="AI Readiness" 
+                    metric={metrics.aiReadiness} 
+                    icon={<Bot className="w-4 h-4 text-brand-600 dark:text-brand-400" />} 
+                  />
+                )}
               </div>
             </div>
           )}
@@ -319,14 +347,14 @@ const ReportRenderer: React.FC<ReportRendererProps> = ({ markdown, sources, targ
                            blockquote: ({node, ...props}) => <blockquote className="border-l-4 border-brand-500 bg-brand-50 dark:bg-brand-900/20 p-4 rounded-r-lg not-italic text-slate-700 dark:text-slate-300 my-6 print:bg-transparent" {...props} />,
                            table: ({node, ...props}) => (
                              <div className="overflow-x-auto my-8 rounded-lg border border-slate-200 dark:border-slate-700 shadow-sm print:shadow-none print:border-slate-300">
-                               <table className="min-w-full divide-y divide-slate-200 dark:divide-slate-700 table-auto" {...props} />
+                               <table className="min-w-full divide-y divide-slate-200 dark:divide-slate-700 table-auto text-left" {...props} />
                              </div>
                            ),
-                           thead: ({node, ...props}) => <thead className="bg-slate-100 dark:bg-slate-950 print:bg-slate-100" {...props} />,
+                           thead: ({node, ...props}) => <thead className="bg-slate-100 dark:bg-slate-900 print:bg-slate-100" {...props} />,
                            tbody: ({node, ...props}) => <tbody className="divide-y divide-slate-200 dark:divide-slate-700 bg-white dark:bg-slate-800" {...props} />,
-                           tr: ({node, ...props}) => <tr className="even:bg-slate-50/60 dark:even:bg-slate-800/40 hover:bg-slate-100/80 dark:hover:bg-slate-700/50 transition-colors" {...props} />,
-                           th: ({node, ...props}) => <th className="px-6 py-4 text-left text-xs font-bold text-slate-800 !dark:text-white uppercase tracking-wider align-top border-b border-slate-200 dark:border-slate-600 min-w-[140px]" {...props} />,
-                           td: ({node, ...props}) => <td className="px-6 py-4 text-sm text-slate-700 dark:text-slate-300 align-top whitespace-normal break-words min-w-[160px]" {...props} />,
+                           tr: ({node, ...props}) => <tr className="group even:bg-slate-50 dark:even:bg-slate-900/20 hover:bg-slate-100 dark:hover:bg-slate-700/30 transition-colors" {...props} />,
+                           th: ({node, ...props}) => <th className="px-4 py-3 text-left text-sm font-bold text-slate-900 dark:text-white whitespace-nowrap border-b border-slate-200 dark:border-slate-700 min-w-[120px]" {...props} />,
+                           td: ({node, ...props}) => <td className="px-4 py-3 text-sm text-slate-700 dark:text-slate-300 align-top whitespace-normal break-words" {...props} />,
                            img: ({node, ...props}) => <img className="rounded-lg max-w-full h-auto my-6 border border-slate-100 dark:border-slate-700 shadow-sm" {...props} />,
                          }}
                        >

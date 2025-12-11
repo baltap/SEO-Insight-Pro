@@ -1,5 +1,5 @@
 import React from 'react';
-import { Search, Cpu, FileText, Zap, HelpCircle, Activity, Globe } from 'lucide-react';
+import { Search, Cpu, FileText, Zap, HelpCircle, Activity, Globe, FileCode, CheckCircle } from 'lucide-react';
 
 const Documentation: React.FC = () => {
   return (
@@ -98,6 +98,73 @@ const Documentation: React.FC = () => {
                 <p className="text-sm text-slate-600 dark:text-slate-400">
                   Identifies keyword gaps, long-tail opportunities, semantic relevance, and competitive positioning in SERPs.
                 </p>
+              </div>
+            </div>
+          </div>
+
+          <hr className="my-8 border-slate-200 dark:border-slate-700" />
+
+          {/* New Section: What is llms.txt */}
+          <div className="not-prose mb-10">
+            <h2 className="text-2xl font-bold text-slate-900 dark:text-white mb-6 flex items-center gap-2">
+              <span className="p-2 bg-indigo-100 dark:bg-indigo-900/30 text-indigo-600 dark:text-indigo-400 rounded-lg">
+                <FileCode className="w-5 h-5" />
+              </span>
+              The llms.txt Standard
+            </h2>
+            <div className="space-y-6">
+              <div className="bg-slate-50 dark:bg-slate-900/50 p-6 rounded-xl border border-slate-200 dark:border-slate-700">
+                 <p className="text-slate-700 dark:text-slate-300 leading-relaxed">
+                    <strong>llms.txt</strong> is a proposed standard for website owners to provide a "README" file specifically for Large Language Models (LLMs) and AI agents. 
+                    While traditional SEO focuses on humans and keyword matching, <strong>AIO (Artificial Intelligence Optimization)</strong> focuses on context, semantic clarity, and factual density.
+                 </p>
+              </div>
+
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                 <div className="bg-white dark:bg-slate-800 p-6 rounded-xl border border-slate-200 dark:border-slate-700 shadow-sm">
+                    <h3 className="text-lg font-bold text-slate-900 dark:text-white mb-3">Why it matters for SEO</h3>
+                    <ul className="space-y-2 text-sm text-slate-600 dark:text-slate-400">
+                       <li className="flex gap-2">
+                          <CheckCircle className="w-4 h-4 text-green-500 mt-0.5 shrink-0" />
+                          <span><strong>Training Data Control:</strong> Influence how foundation models learn about your brand during training.</span>
+                       </li>
+                       <li className="flex gap-2">
+                          <CheckCircle className="w-4 h-4 text-green-500 mt-0.5 shrink-0" />
+                          <span><strong>RAG Optimization:</strong> Provide clean, structured text for "Retrieval-Augmented Generation" systems (like ChatGPT Search or Perplexity).</span>
+                       </li>
+                       <li className="flex gap-2">
+                          <CheckCircle className="w-4 h-4 text-green-500 mt-0.5 shrink-0" />
+                          <span><strong>Hallucination Reduction:</strong> Providing explicit facts helps prevent AI from inventing details about your pricing or features.</span>
+                       </li>
+                    </ul>
+                 </div>
+                 
+                 <div className="bg-white dark:bg-slate-800 p-6 rounded-xl border border-slate-200 dark:border-slate-700 shadow-sm">
+                    <h3 className="text-lg font-bold text-slate-900 dark:text-white mb-3">File Structure</h3>
+                    <p className="text-sm text-slate-600 dark:text-slate-400 mb-4">
+                       The file should be placed at <code>yourdomain.com/llms.txt</code>. It typically uses Markdown formatting.
+                    </p>
+                    <div className="bg-slate-900 rounded p-3 text-xs font-mono text-slate-300 overflow-x-auto">
+                       <div># Project Name</div>
+                       <div className="text-slate-500"># Summary</div>
+                       <div>A brief description of the project...</div>
+                       <br/>
+                       <div className="text-slate-500"># Core Info</div>
+                       <div>- Pricing: ...</div>
+                       <div>- Features: ...</div>
+                    </div>
+                 </div>
+              </div>
+
+              <div className="bg-gradient-to-r from-brand-600 to-brand-700 text-white p-6 rounded-xl shadow-md">
+                 <div className="flex flex-col md:flex-row items-center justify-between gap-6">
+                    <div>
+                       <h3 className="text-xl font-bold mb-2">Create yours in minutes</h3>
+                       <p className="text-brand-100">
+                          Use our built-in generator (available in the top navigation) to build a perfectly formatted llms.txt file tailored to your industry.
+                       </p>
+                    </div>
+                 </div>
               </div>
             </div>
           </div>

@@ -1,11 +1,11 @@
 import React from 'react';
-import { BarChart3, Github, Bot, Sun, Moon } from 'lucide-react';
+import { BarChart3, Github, Bot, Sun, Moon, FileCode } from 'lucide-react';
 
 interface LayoutProps {
   children: React.ReactNode;
   onChatToggle?: () => void;
-  onNavigate: (view: 'home' | 'docs') => void;
-  currentView: 'home' | 'docs';
+  onNavigate: (view: 'home' | 'docs' | 'llms-generator') => void;
+  currentView: 'home' | 'docs' | 'llms-generator';
   isDarkMode?: boolean;
   onThemeToggle?: () => void;
 }
@@ -45,6 +45,17 @@ const Layout: React.FC<LayoutProps> = ({ children, onChatToggle, onNavigate, cur
                  <span className="hidden sm:inline">SEO Assistant</span>
                </button>
              )}
+             <button
+               onClick={() => onNavigate('llms-generator')}
+               className={`flex items-center gap-2 px-3 py-2 text-sm font-medium rounded-lg transition-colors ${
+                 currentView === 'llms-generator'
+                   ? 'bg-brand-50 dark:bg-brand-900/20 text-brand-600 dark:text-brand-400'
+                   : 'text-slate-500 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-800 hover:text-slate-900 dark:hover:text-slate-200'
+               }`}
+             >
+               <FileCode className="w-4 h-4" />
+               <span className="hidden sm:inline">llms.txt Generator</span>
+             </button>
              <button
                onClick={() => onNavigate('docs')}
                className={`text-sm font-medium transition-colors ${

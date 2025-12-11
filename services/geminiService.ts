@@ -51,14 +51,14 @@ Your report MUST follow this exact structure and use Markdown formatting:
 - **Content Completeness vs. Competitors**: [Gap analysis]
 - **Thin Content Issues**: [Identify weak areas]
 
-## 5. Technical SEO Review
+## 5. Technical SEO & AI Readiness
 *Infer based on standard best practices and likely structure.*
 - **Load Performance Issues**: [Inferred from heavy assets/scripts]
 - **Mobile-Friendliness**: [Responsive design check]
 - **JavaScript Rendering Concerns**: [SSR vs CSR implications]
 - **Indexability**: [Robots/Sitemap inference]
 - **Schema Markup**: [Missing opportunities]
-- **Canonical Tags**: [Proper usage check]
+- **AI Readiness (llms.txt)**: [Check if the site appears to have an llms.txt or /llms-full.txt file for AI crawlers. If not found, mark as a missed opportunity.]
 
 ### Technical Competitive Benchmark
 | Technical Factor | Target Site | Competitor A | Competitor B |
@@ -66,7 +66,7 @@ Your report MUST follow this exact structure and use Markdown formatting:
 | Core Web Vitals (Est.) | ... | ... | ... |
 | HTTPS / Security | ... | ... | ... |
 | Schema Coverage | ... | ... | ... |
-| Mobile Usability | ... | ... | ... |
+| AI Readiness (llms.txt) | ... | ... | ... |
 
 ## 6. Competitive Intelligence Deep-Dive
 *Conduct a comprehensive competitive intelligence analysis against top competitors.*
@@ -224,11 +224,13 @@ It must strictly follow this JSON structure with no markdown inside the tags:
   "technical": { "score": 85, "status": "Good" },
   "onPage": { "score": 60, "status": "Fair" },
   "content": { "score": 40, "status": "Poor" },
-  "keywords": { "score": 90, "status": "Excellent" }
+  "keywords": { "score": 90, "status": "Excellent" },
+  "aiReadiness": { "score": 20, "status": "Critical" }
 }
 </JSON_METRICS>
 
 Status options: "Critical", "Poor", "Fair", "Good", "Excellent". Score: 0-100.
+For aiReadiness, give a low score if llms.txt is missing.
 `;
 
 let currentChatSession: ChatSession | null = null;
@@ -277,6 +279,10 @@ export const analyzeSEO = async (request: SEOAnalysisRequest, onProgress?: (text
   
   Use Google Search to research the website's current standing, identify its top real-world competitors (if not provided), and analyze keyword trends.
   Execute a deep-dive comparison on Content Gaps, Backlink profiles, and SERP features.
+  
+  CRITICAL: Investigate if the website is "AI Ready" by checking for the existence of an 'llms.txt' or 'llms-full.txt' file at the root (e.g., site.com/llms.txt). 
+  Use the search tool to find if "llms.txt" is indexed for this domain.
+  Include this in the technical review and the 'aiReadiness' score.
   `;
 
   try {
